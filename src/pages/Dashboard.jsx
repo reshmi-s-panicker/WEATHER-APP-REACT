@@ -42,8 +42,8 @@ export default function Dashboard() {
     [addToHistory]
   );
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    await logout();
     navigate('/login');
   }
 

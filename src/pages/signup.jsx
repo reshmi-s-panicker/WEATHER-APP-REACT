@@ -1,27 +1,28 @@
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { Box, Paper, TextField, Button, Typography, Alert, Stack, Link } from '@mui/material';
 import WbTwilightIcon from '@mui/icons-material/WbTwilight';
 import { useAuth } from '../context/AuthContext';
 import { colors } from '../theme';
 
-export default function Login() {
-  const { login } = useAuth();
+export default function Signup() {
+  const { signup } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
 
-  const from = location.state?.from?.pathname || '/';
-
-function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    if (password !== confirm) {
+      setError('Passwords do not match.');
+      return;
+    }
     try {
-      login(email.trim(), password);
-      navigate(from, { replace: true });
+      await signup(email.trim(), password);
+      navigate('/', { replace: true });
     } catch (err) {
       setError(err.message);
     }
@@ -51,10 +52,10 @@ function handleSubmit(e) {
         <Stack spacing={1} alignItems="center" sx={{ mb: 3 }}>
           <WbTwilightIcon sx={{ fontSize: 40, color: colors.amber }} />
           <Typography variant="h4" component="h1">
-            Skyline
+            Create account
           </Typography>
           <Typography variant="body2" color="text.secondary" textAlign="center">
-            Sign in to search the sky over any city.
+            Sign up to start tracking the sky.
           </Typography>
         </Stack>
 
@@ -82,17 +83,26 @@ function handleSubmit(e) {
               onChange={(e) => setPassword(e.target.value)}
               required
               fullWidth
+              helperText="At least 6 characters"
+            />
+            <TextField
+              label="Confirm password"
+              type="password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              required
+              fullWidth
             />
             <Button type="submit" variant="contained" size="large" fullWidth>
-              Sign in
+              Sign up
             </Button>
           </Stack>
         </Box>
 
-      <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
-          Don't have an account?{' '}
-          <Link component={RouterLink} to="/signup">
-            Sign up
+        <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
+          Already have an account?{' '}
+          <Link component={RouterLink} to="/login">
+            Sign in
           </Link>
         </Typography>
       </Paper>
